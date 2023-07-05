@@ -1,0 +1,16 @@
+.fa.k-sprite,
+.fa.k-sprite::before {
+    font-size: 12px;
+    line-height: 12px;
+    vertical-align: middle;
+}
+
+body {
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Add other custom styles as needed */
+h1 {
+    text-align: center;
+    color: rgb(102, 150, 255);
+}

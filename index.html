@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- Kendo UI CSS -->
+
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.511/styles/kendo.common.min.css" />
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.511/styles/kendo.default.min.css" id="kendo-theme" />
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.6.0/jszip.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2021.2.511/js/kendo.all.min.js"></script>
+
+
+    <!-- Kendo UI JavaScript -->
+
+    <title>Document</title>
+</head>
+
+<body>
+
+    <script>
+        $(document).ready(function () {
+            var themeDropDown = $("#themeDropdown").kendoDropDownList({
+                dataTextField: "text",
+                dataValueField: "value",
+                dataSource: [
+                    { text: "Default", value: "default" },
+                    { text: "Bootstrap", value: "bootstrap" },
+                    { text: "Material", value: "material" },
+                    { text: "Uniform", value: "uniform" },
+                    // Add more themes as needed
+                ],
+                change: function (e) {
+                    var theme = this.value();
+                    changeTheme(theme);
+                }
+            }).data("kendoDropDownList");
+
+            function changeTheme(theme) {
+                var kendoTheme = document.getElementById('kendo-theme');
+                kendoTheme.href = 'https://kendo.cdn.telerik.com/2021.2.511/styles/kendo.' + theme + '.min.css';
+            }
+
+            $("#grid").kendoGrid({
+                dataSource: {
+                    // Grid data source configuration
+                },
+                // Grid configuration
+            });
+        });
+    </script>
+
+    <div>
+        Select Theme:
+        <input id="themeDropdown" />
+    </div>
+
+    <h1>Kendo Ui</h1>
+    <div id="grid"></div>
+
+
+    <script>
+        $(document).ready(function () {
+            var userTypes = [
+                { text: "Admin", value: "Admin" },
+                { text: "User", value: "User" },
+                { text: "Guest", value: "Guest" }
+            ];
+
+            var dataSource = new kendo.data.DataSource({
+                transport: {
+                    read: {
+                        url: "http://localhost:5000/api/User",
+                        dataType: "json"
+                    },
+                    create: {
+                        url: "http://localhost:5000/api/User",
+                        type: "POST",
+                        dataType: "json",
+                        contentType: "application/json",
+                        success: function (response) {
+                            // Handle success
+                            console.log("User created successfully:", response);
+                            // Refresh the grid to display the new user
+                            $("#grid").data("kendoGrid").dataSource.read();
+                        },
+                        error: function (xhr, status, error) {
+                            // Handle error
+                            console.log("Error creating user:", error);
+                        }
+                    },
+                    update: {
+                        url: function (data) {
+                            return "http://localhost:5000/api/User/" + data.userId;
+                        },
+                        type: "PUT",
+                        dataType: "json",
+                        contentType: "application/json",
+                        success: function (response) {
+                            // Refresh the grid to reflect the updated user
+                            $("#grid").data("kendoGrid").dataSource.read();
+
+                            alert("Data updated");
+                            // Handle success
+                            console.log("User updated successfully:", response);
+                        },
+                        error: function (xhr, status, error) {
+                            // Handle error
+                            console.log("Error updating user:", error);
+                        }
+                    },
+                    destroy: {
+                        url: function (data) {
+                            return "http://localhost:5000/api/User/" + data.userId;
+                        },
+                        type: "DELETE",
+                        dataType: "json",
+                        success: function (response) {
+                            // Handle success
+                            console.log("User deleted successfully:", response);
+                            // Refresh the grid to remove the deleted user
+                            $("#grid").data("kendoGrid").dataSource.read();
+                            $("#grid").data("kendoGrid").dataSource.refresh();
+                        },
+                        error: function (xhr, status, error) {
+                            // Handle error
+                            console.log("Error deleting user:", error);
+                        }
+                    },
+                    parameterMap: function (options, operation) {
+                        if (operation === "create" || operation === "update") {
+
+                            console.log(JSON.stringify(options));
+                            return JSON.stringify(options);
+
+                        }
+                    },
+
+                },
+                requestEnd: function (e) {
+                    if (e.type != "read") {
+                        // Refresh the grid to reflect the changes
+                        dataSource.read();
+                    }
+                },
+                schema: {
+                    model: {
+                        id: "userId",
+                        fields: {
+                            userId: { editable: false, type: "number", default: 0 },
+                            username: { validation: { required: true } },
+                            password: { validation: { required: true } },
+                            userType: { validation: { required: true } }
+                        }
+                    }
+                },
+                pageSize: 5,
+            });
+
+            $("#grid").kendoGrid({
+                toolbar: ["create", "excel", "pdf"],
+                dataSource: dataSource,
+                excel: {
+                    fileName: "Kendo UI Grid Export.xlsx",                   
+                    filterable: true,
+                },
+                pdf: {
+                    allPages: true,
+                    avoidLinks: true,
+                    paperSize: "A4",
+                    margin: { top: "2cm", left: "1cm", right: "1cm", bottom: "1cm" },
+                    landscape: true,
+                    repeatHeaders: true,
+                    template: $("#page-template").html(),
+                    scale: 0.8
+                },
+                height: 400,
+                editable: "inline",
+                sortable: true,
+                filterable: true,
+                groupable: true,
+                pageable: true,
+                columns: [
+                    { field: "username", title: "Username" },
+                    { field: "password", title: "Password" },
+                    {
+                        field: "userType",
+                        title: "User Type",
+                        editor: function (container, options) {
+                            $('<input data-text-field="text" data-value-field="value" data-bind="value:' + options.field + '"/>')
+                                .appendTo(container)
+                                .kendoDropDownList({
+                                    autoBind: false,
+                                    dataSource: {
+                                        data: userTypes
+                                    }
+                                });
+                        },
+                        template: '#= userType #'
+                    },
+                    { command: ["edit", "destroy"], title: "&nbsp;", width: "250px" }
+                ]
+            });
+        });
+
+    </script>
+</body>
+
+</html>
