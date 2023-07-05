@@ -1,0 +1,248 @@
+﻿@{
+    ViewData["Title"] = "Home Page";
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.511/styles/kendo.common.min.css" />
+    <link rel="stylesheet" href="https://kendo.cdn.telerik.com/2021.2.511/styles/kendo.default.min.css" id="kendo-theme"/>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.6.0/jszip.min.js"></script>
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://kendo.cdn.telerik.com/2021.2.511/js/kendo.all.min.js"></script>
+</head>
+<body>
+    <div>
+        Select Theme:
+        <input id="themeDropdown" />
+    </div>
+    <div id="grid"></div>
+
+    <script>
+        $(document).ready(function () {
+    
+            var dataSource = new kendo.data.DataSource({
+                transport: {
+                    read: {
+                        url: "http://localhost:7147/api/Data", // Web API endpoint to fetch data
+                        dataType: "json"
+                    },
+                    create: {
+                        url: "http://localhost:7147/api/Data/AddBrand", // Web API endpoint to create a new record
+                        type: "POST",
+                        dataType: "json",
+                        contentType: "application/json",
+                        success: function (response) {
+                            // Handle the successful response from the server
+                            console.log("Record created successfully!");
+                            console.log(response);
+                            dataSource.read();
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            // Handle any errors that occur during the request
+                            console.log("Error creating record!");
+                            console.log(textStatus + ": " + errorThrown);
+                        }
+                    },
+                    update: {
+                        url: function (data) {
+                            return "http://localhost:7147/api/Data/UpdateBrand/" + data.brand_id; // Web API endpoint to update an existing record
+                        },
+                        type: "PUT",
+                        dataType: "json",
+                        contentType: "application/json",
+                        success: function (response) {
+                            // Handle the successful response from the server
+                            console.log("Record updated successfully!");
+                            console.log(response);
+                            // Refresh the grid data after any CRUD operation
+                            dataSource.read();
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            // Handle any errors that occur during the request
+                            console.log("Error updating record!");
+                            console.log(textStatus + ": " + errorThrown);
+                        }
+                    }
+                    ,
+                    destroy: {
+                        url: function (data) {
+                            return "http://localhost:7147/api/Data/DeleteBrand/" + data.brand_id; // Web API endpoint to delete a record
+                        },
+                        type: "DELETE",
+                        dataType: "json",
+                        success: function (response) {
+                            // Handle the successful response from the server
+                            console.log("Record deleted successfully!");
+                            console.log(response);
+                        },
+                        error: function (jqXHR, textStatus, errorThrown) {
+                            // Handle any errors that occur during the request
+                            console.log("Error deleting record!");
+                            console.log(textStatus + ": " + errorThrown);
+
+                        }
+                    },
+                    parameterMap: function (data, operation) {
+                        if (operation === "create" || operation === "update") {
+                            return JSON.stringify(data);
+                        }
+                        return data;
+                    }
+                }, 
+                requestEnd: function (e) {
+                        // Perform actions based on the response
+                        console.log("Response received:");
+                        console.log(e);
+                        if(e.type != "read")
+                            dataSource.read();
+                },
+                schema: {
+                    model: {
+                        id: "brand_id",
+                        fields: {
+                            brand_id: { type: "string", defaultValue: "0" },
+                            brand_name: { validation: { required: true } },
+                            brand_type: { type:"string", defaultValue:"local" },
+                            status:{type:"string",defaultValue:"active"}
+                        }
+                    }
+                },
+                pageSize: 3
+            });
+
+            $("#grid").kendoGrid({
+                dataSource: dataSource,
+                
+                pageable: true,
+
+                toolbar: ["create", "excel", "pdf"],
+                columns: [
+                    { field: "brand_name", title: "Brand Name" },
+                    {
+                        field: "brand_type",
+                        title: "brand type",
+                        editor: function (container, options) {
+                            $('<input data-bind="value:' + options.field + '"/>')
+                                .appendTo(container)
+                                .kendoDropDownList({
+                                    dataSource: ["international","other"],
+                                    optionLabel: "local"
+                                });
+                        }
+                    }, 
+                    {
+                        field: "status",
+                        title: "Status",
+                        editor: function (container, options) {
+                            $('<input id="radioActive" type="radio" name="' + options.field + '" value="Active" />')
+                                .appendTo(container);
+                            $('<label for="radioActive">Active</label>')
+                                .appendTo(container);
+                            $('<input id="radioInactive" type="radio" name="' + options.field + '" value="Inactive" />')
+                                .appendTo(container);
+                            $('<label for="radioInactive">Inactive</label>')
+                                .appendTo(container);
+                        },
+                        template: '#= status #'
+                    },
+                    { command: ["edit", "destroy"], title: "&nbsp;" }
+                ],
+                editable: "inline",
+                sortable: true,
+                filterable: true,
+                groupable:true,
+                save:function(e) {                    
+                },
+
+                
+                excel: {
+                    fileName: "GridData.xlsx", // Specify the file name for the exported Excel file
+                    filterable: true, // Enable filtering in the exported Excel file
+                    allPages: true // Export all grid pages to Excel
+                },
+
+                pdf: {
+                    fileName: "GridData.pdf", // Specify the file name for the exported PDF
+                    allPages: true, // Export all grid pages to PDF
+                }
+            });
+ 
+        });
+    </script>
+    <script>
+        $(document).ready(function () {
+            var themeDropDown = $("#themeDropdown").kendoDropDownList({
+                dataTextField: "text",
+                dataValueField: "value",
+                dataSource: [
+                    { text: "Default", value: "default" },
+                    { text: "Bootstrap", value: "bootstrap" },
+                    { text: "Material", value: "material" },
+                    // Add more themes as needed
+                ],
+                change: function (e) {
+                    var theme = this.value();
+                    changeTheme(theme);
+                }
+            }).data("kendoDropDownList");
+
+            function changeTheme(theme) {
+                var kendoTheme = document.getElementById('kendo-theme');
+                kendoTheme.href = 'https://kendo.cdn.telerik.com/2021.2.511/styles/kendo.' + theme + '.min.css';
+            }
+
+            $("#grid").kendoGrid({
+                dataSource: {
+                    // Grid data source configuration
+                },
+                // Grid configuration
+            });
+        });
+    </script>
+
+    <script>
+        $("#grid").kendoGrid({
+            dataSource: {
+                transport: {
+                    read: {
+                        url: "your-api-url", // Replace with your API endpoint for retrieving data
+                        dataType: "json"
+                    },
+                    create: {
+                        url: "your-api-url", // Replace with your API endpoint for creating data
+                        dataType: "json",
+                        type: "POST"
+                    },
+                    update: {
+                        url: "your-api-url", // Replace with your API endpoint for updating data
+                        dataType: "json",
+                        type: "PUT"
+                    },
+                    destroy: {
+                        url: "your-api-url", // Replace with your API endpoint for deleting data
+                        dataType: "json",
+                        type: "DELETE"
+                    }
+                },
+                schema: {
+                    // Omit the schema property as there is no predefined schema
+                }
+            },
+            columns: [
+                // Define your grid columns here
+                // Specify the field names and any other properties as needed
+                { field: "columnName1", title: "Column 1" },
+                { field: "columnName2", title: "Column 2" },
+                // Add more columns as required
+            ],
+            editable: "popup",
+            toolbar: ["create", "save", "cancel"],
+            pageable: true,
+            sortable: true
+            // Add other configurations and event handlers as needed
+        });
+
+    </script>
+</body>
+</html>

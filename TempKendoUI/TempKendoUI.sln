@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.6.33815.320
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataBringer", "DataBringer\DataBringer.csproj", "{E0AA2CC2-7C18-41B6-AB1A-263E97A8EF4E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DataViewer", "DataViewer\DataViewer.csproj", "{BB3EEFAD-3079-415F-BD0A-7620BD7826EA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{E0AA2CC2-7C18-41B6-AB1A-263E97A8EF4E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{E0AA2CC2-7C18-41B6-AB1A-263E97A8EF4E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{E0AA2CC2-7C18-41B6-AB1A-263E97A8EF4E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{E0AA2CC2-7C18-41B6-AB1A-263E97A8EF4E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB3EEFAD-3079-415F-BD0A-7620BD7826EA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB3EEFAD-3079-415F-BD0A-7620BD7826EA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB3EEFAD-3079-415F-BD0A-7620BD7826EA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB3EEFAD-3079-415F-BD0A-7620BD7826EA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {703AFCF1-CE94-412B-A29F-A5CAB778119F}
+	EndGlobalSection
+EndGlobal
