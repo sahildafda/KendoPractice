@@ -1,0 +1,63 @@
+{
+    "tableName": "DbTraining.sales.customers",
+    "old_data": {
+        "customer_id": 1,
+        "first_name": "Debra",
+        "last_name": "Burks",
+        "phone": {},
+        "email": "debra.burks@yahoo.com",
+        "street": "9273 Thorne Ave. ",
+        "city": "Orchard Park",
+        "state": "NY",
+        "zip_code": "14127"
+    },
+    "updated_data": {
+        "customer_id": 1,
+        "first_name": "Debra",
+        "last_name": "Burks",
+        "phone": "9099433022",
+        "email": "debra.burks@yahoo.com",
+        "street": "9273 Thorne Ave. ",
+        "city": "Orchard Park",
+        "state": "NY",
+        "zip_code": "14127"
+    }
+}
+
+UPDATE 
+DbTraining.sales.customers 
+SET  
+    first_name = 'Debra'  ,  
+    last_name = 'Burks'  ,  
+    phone = '9099433022'  ,  
+    email = 'debra.burks@yahoo.com'  ,  
+    street = '9273 Thorne Ave. '  ,  
+    city = 'Orchard Park'  ,  
+    state = 'NY'  ,  
+    zip_code = 14127  
+WHERE  
+    customer_id = 1  AND  
+    first_name = 'Debra'  AND  
+    last_name = 'Burks'  AND  
+    phone = '{}'  AND  
+    email = 'debra.burks@yahoo.com'  AND  
+    street = '9273 Thorne Ave. '  AND  
+    city = 'Orchard Park'  AND  
+    state = 'NY'  AND  
+    zip_code = 14127 
+
+UPDATE 
+DbTraining.sales.customers 
+SET 
+    first_name = 'Debra'  ,  l
+    ast_name = 'Burks'  ,  
+    phone = '9099433022'  ,  
+    email = 'debra.burks@yahoo.com'  ,  
+    street = '9273 Thorne Ave. '  ,  
+    city = 'Orchard Park'  ,  
+    state = 'NY'  ,  
+    zip_code = 14127  
+WHERE  
+    customer_id = 1  AND  
+    first_name = 'Debra'  AND  
+    last_name = 'Burks'  AND  phone = '{}'  AND  email = 'debra.burks@yahoo.com'  AND  street = '9273 Thorne Ave. '  AND  city = 'Orchard Park'  AND  state = 'NY'  AND  zip_code = 14127 
